@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Split & Order — Group Cart Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBF7EE;
+    --paper:#FFFFFF;
+    --ink:#1E2A1F;
+    --ink-soft:#5B6B5C;
+    --line:#DED6C3;
+    --green:#2F6B3A;
+    --green-soft:#E4EEE0;
+    --coral:#D96C4A;
+    --gold:#C79A3D;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Manrope',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em; margin:0; }
+
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:48px 24px 80px;
+  }
+  header{
+    margin-bottom:36px;
+  }
+  .eyebrow{
+    font-size:13px;
+    color:var(--green);
+    font-weight:600;
+    margin-bottom:10px;
+  }
+  h1{ font-size:clamp(30px,5vw,42px); color:var(--ink); max-width:16ch; }
+  .sub{
+    color:var(--ink-soft);
+    font-size:15px;
+    margin-top:12px;
+    max-width:56ch;
+  }
+
+  .layout{
+    display:grid;
+    grid-template-columns:1fr 320px;
+    gap:28px;
+    margin-top:36px;
+  }
+
+  .panel{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:26px;
+  }
+  .panel + .panel{ margin-top:20px; }
+
+  .panel h2{ font-size:19px; margin-bottom:6px; }
+  .panel .hint{ color:var(--ink-soft); font-size:13px; margin-bottom:18px; }
+
+  .people-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:16px;
+  }
+  .person-chip{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--green-soft);
+    color:var(--green);
+    padding:7px 12px;
+    border-radius:20px;
+    font-size:13.5px;
+    font-weight:600;
+  }
+  .person-chip button{
+    background:none;
+    border:none;
+    color:var(--green);
+    cursor:pointer;
+    font-size:14px;
+    line-height:1;
+    padding:0;
+    opacity:0.6;
+  }
+  .person-chip button:hover{ opacity:1; }
+
+  .add-row{
+    display:flex;
+    gap:8px;
+  }
+  input[type="text"], input[type="number"], select{
+    font-family:'Manrope',sans-serif;
+    font-size:14px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:10px 12px;
+    background:#fff;
+    color:var(--ink);
+  }
+  input:focus, select:focus{ outline:2px solid var(--green); outline-offset:1px; }
+  .add-row input[type="text"]{ flex:1; }
+  .btn{
+    font-family:'Manrope',sans-serif;
+    font-weight:700;
+    font-size:13.5px;
+    border:none;
+    border-radius:8px;
+    padding:10px 18px;
+    cursor:pointer;
+    background:var(--ink);
+    color:#fff;
+  }
+  .btn:hover{ background:#000; }
+  .btn.secondary{
+    background:var(--green-soft);
+    color:var(--green);
+  }
+  .btn.secondary:hover{ background:#d3e5cd; }
+  .btn.small{ padding:7px 12px; font-size:12.5px; }
+
+  .item-form{
+    display:grid;
+    grid-template-columns:1fr 100px 140px auto;
+    gap:8px;
+    margin-bottom:20px;
+  }
+  .item-form select{ width:100%; }
+
+  .item-table{ width:100%; border-collapse:collapse; }
+  .item-table th{
+    text-align:left;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--ink-soft);
+    padding:0 0 10px;
+    border-bottom:1px solid var(--line);
+    font-weight:600;
+  }
+  .item-table td{
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+    font-size:14px;
+    vertical-align:middle;
+  }
+  .item-table tr:last-child td{ border-bottom:none; }
+  .item-table .who-tag{
+    display:inline-block;
+    background:var(--green-soft);
+    color:var(--green);
+    font-size:12px;
+    font-weight:600;
+    padding:3px 9px;
+    border-radius:12px;
+  }
+  .item-table .del-btn{
+    background:none;
+    border:none;
+    color:var(--coral);
+    cursor:pointer;
+    font-size:13px;
+    font-weight:600;
+  }
+  .empty-note{
+    color:var(--ink-soft);
+    font-size:13.5px;
+    padding:24px 0;
+    text-align:center;
+    border:1px dashed var(--line);
+    border-radius:10px;
+  }
+
+  .summary-card{
+    position:sticky;
+    top:24px;
+  }
+  .summary-total{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    padding-bottom:16px;
+    margin-bottom:16px;
+    border-bottom:1px solid var(--line);
+  }
+  .summary-total .label{ font-size:13px; color:var(--ink-soft); }
+  .summary-total .val{ font-family:'Fraunces',serif; font-size:28px; font-weight:600; }
+
+  .split-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .split-row:last-child{ border-bottom:none; }
+  .split-row .name{ font-size:14px; font-weight:600; }
+  .split-row .amt{ font-family:'Fraunces',serif; font-size:16px; }
+  .split-row .count{ font-size:11.5px; color:var(--ink-soft); }
+
+  .free-delivery-note{
+    margin-top:18px;
+    padding:14px;
+    background:var(--green-soft);
+    border-radius:10px;
+    font-size:13px;
+    color:var(--green);
+    font-weight:600;
+  }
+  .free-delivery-note.warn{
+    background:#FBEEE6;
+    color:var(--coral);
+  }
+
+  @media (max-width:760px){
+    .layout{ grid-template-columns:1fr; }
+    .item-form{ grid-template-columns:1fr; }
+    .summary-card{ position:static; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">WEB PROJECT — Interactive tool</div>
+    <h1>Split & Order</h1>
+    <p class="sub">A working group-cart calculator built alongside the Instamart Group Ordering PRD — add people, add items, and see who owes what, live.</p>
+  </header>
+
+  <div class="layout">
+    <div class="main-col">
+      <div class="panel">
+        <h2>Who's in the cart?</h2>
+        <p class="hint">Add everyone splitting this order.</p>
+        <div class="people-row" id="peopleRow"></div>
+        <div class="add-row">
+          <input type="text" id="personInput" placeholder="Add a name, e.g. Riya">
+          <button class="btn" onclick="addPerson()">Add person</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Cart items</h2>
+        <p class="hint">Add each item, its price, and who it's for.</p>
+        <div class="item-form">
+          <input type="text" id="itemName" placeholder="Item name">
+          <input type="number" id="itemPrice" placeholder="₹ Price" min="0">
+          <select id="itemPerson"></select>
+          <button class="btn secondary small" onclick="addItem()">Add item</button>
+        </div>
+        <table class="item-table" id="itemTable" style="display:none;">
+          <thead><tr><th>Item</th><th>For</th><th>Price</th><th></th></tr></thead>
+          <tbody id="itemBody"></tbody>
+        </table>
+        <div class="empty-note" id="emptyNote">No items yet — add your first one above.</div>
+      </div>
+    </div>
+
+    <div class="summary-card panel">
+      <h2>Split summary</h2>
+      <div class="summary-total">
+        <span class="label">Cart total</span>
+        <span class="val" id="cartTotal">₹0</span>
+      </div>
+      <div id="splitBody">
+        <p class="hint" style="margin:0;">Add people and items to see the split.</p>
+      </div>
+      <div class="free-delivery-note" id="deliveryNote"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const FREE_DELIVERY_MIN = 299;
+  let people = ['Riya', 'You'];
+  let items = [
+    { name: 'Amul milk 1L', price: 64, person: 'Riya' },
+    { name: 'Bread, brown', price: 45, person: 'You' },
+  ];
+
+  function addPerson(){
+    const input = document.getElementById('personInput');
+    const name = input.value.trim();
+    if (!name) return;
+    if (people.includes(name)) { input.value = ''; return; }
+    people.push(name);
+    input.value = '';
+    render();
+  }
+
+  function removePerson(name){
+    people = people.filter(p => p !== name);
+    items = items.filter(i => i.person !== name);
+    render();
+  }
+
+  function addItem(){
+    const nameInput = document.getElementById('itemName');
+    const priceInput = document.getElementById('itemPrice');
+    const personSelect = document.getElementById('itemPerson');
+    const name = nameInput.value.trim();
+    const price = parseFloat(priceInput.value);
+    const person = personSelect.value;
+    if (!name || isNaN(price) || price <= 0 || !person) return;
+    items.push({ name, price, person });
+    nameInput.value = '';
+    priceInput.value = '';
+    render();
+  }
+
+  function removeItem(index){
+    items.splice(index, 1);
+    render();
+  }
+
+  function render(){
+    // people chips
+    const peopleRow = document.getElementById('peopleRow');
+    peopleRow.innerHTML = people.map(p =>
+      `<span class="person-chip">${escapeHtml(p)}<button onclick="removePerson('${escapeAttr(p)}')" aria-label="Remove ${escapeAttr(p)}">✕</button></span>`
+    ).join('');
+
+    // person select
+    const select = document.getElementById('itemPerson');
+    const prevVal = select.value;
+    select.innerHTML = people.map(p => `<option value="${escapeAttr(p)}">${escapeHtml(p)}</option>`).join('');
+    if (people.includes(prevVal)) select.value = prevVal;
+
+    // item table
+    const itemBody = document.getElementById('itemBody');
+    const itemTable = document.getElementById('itemTable');
+    const emptyNote = document.getElementById('emptyNote');
+    if (items.length === 0){
+      itemTable.style.display = 'none';
+      emptyNote.style.display = 'block';
+    } else {
+      itemTable.style.display = 'table';
+      emptyNote.style.display = 'none';
+      itemBody.innerHTML = items.map((item, idx) => `
+        <tr>
+          <td>${escapeHtml(item.name)}</td>
+          <td><span class="who-tag">${escapeHtml(item.person)}</span></td>
+          <td>₹${item.price.toFixed(0)}</td>
+          <td><button class="del-btn" onclick="removeItem(${idx})">Remove</button></td>
+        </tr>
+      `).join('');
+    }
+
+    // totals
+    const total = items.reduce((sum, i) => sum + i.price, 0);
+    document.getElementById('cartTotal').textContent = `₹${total.toFixed(0)}`;
+
+    const splitBody = document.getElementById('splitBody');
+    if (people.length === 0 || items.length === 0){
+      splitBody.innerHTML = '<p class="hint" style="margin:0;">Add people and items to see the split.</p>';
+    } else {
+      splitBody.innerHTML = people.map(p => {
+        const personItems = items.filter(i => i.person === p);
+        const personTotal = personItems.reduce((s, i) => s + i.price, 0);
+        return `
+          <div class="split-row">
+            <div>
+              <div class="name">${escapeHtml(p)}</div>
+              <div class="count">${personItems.length} item${personItems.length !== 1 ? 's' : ''}</div>
+            </div>
+            <div class="amt">₹${personTotal.toFixed(0)}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    const deliveryNote = document.getElementById('deliveryNote');
+    if (items.length === 0){
+      deliveryNote.style.display = 'none';
+    } else if (total >= FREE_DELIVERY_MIN){
+      deliveryNote.style.display = 'block';
+      deliveryNote.className = 'free-delivery-note';
+      deliveryNote.textContent = `✓ Free delivery unlocked — cart is above ₹${FREE_DELIVERY_MIN}`;
+    } else {
+      deliveryNote.style.display = 'block';
+      deliveryNote.className = 'free-delivery-note warn';
+      deliveryNote.textContent = `Add ₹${(FREE_DELIVERY_MIN - total).toFixed(0)} more for free delivery`;
+    }
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+  function escapeAttr(str){
+    return String(str).replace(/'/g, "\\'");
+  }
+
+  document.getElementById('personInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addPerson();
+  });
+  document.getElementById('itemPrice').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addItem();
+  });
+
+  render();
+</script>
+</body>
+</html>
