@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype — Group Ordering (Instamart)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBF7EE; --paper:#FFFFFF; --ink:#1E2A1F; --ink-soft:#5B6B5C;
+    --line:#DED6C3; --green:#2F6B3A; --green-soft:#E4EEE0; --amber:#F0A63A;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--bg); font-family:'Inter',sans-serif; color:var(--ink); }
+  h1,h2{ font-family:'Bricolage Grotesque',sans-serif; }
+
+  .wrap{ max-width:960px; margin:0 auto; padding:40px 24px 80px; }
+  header{ margin-bottom:32px; text-align:center; }
+  .eyebrow{ font-size:12.5px; color:var(--green); font-weight:700; letter-spacing:0.04em; text-transform:uppercase; margin-bottom:8px; }
+  h1{ font-size:clamp(24px,4vw,32px); margin:0 0 8px; }
+  .sub{ color:var(--ink-soft); font-size:14.5px; }
+
+  .stage{
+    display:flex; flex-direction:column; align-items:center; gap:20px;
+  }
+  .phone{
+    width:320px; height:640px; background:#fff; border-radius:36px;
+    border:10px solid #1a1a1a; box-shadow:0 30px 60px rgba(0,0,0,0.15);
+    position:relative; overflow:hidden;
+  }
+  .notch{
+    position:absolute; top:0; left:50%; transform:translateX(-50%);
+    width:120px; height:22px; background:#1a1a1a; border-radius:0 0 14px 14px; z-index:5;
+  }
+  .screen{
+    position:absolute; inset:0; padding:34px 18px 18px;
+    opacity:0; pointer-events:none; transition:opacity .25s ease;
+    display:flex; flex-direction:column;
+  }
+  .screen.active{ opacity:1; pointer-events:auto; }
+
+  .app-bar{ font-weight:700; font-size:15px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; }
+  .avatars{ display:flex; }
+  .avatars span{ width:22px; height:22px; border-radius:50%; background:var(--green-soft); border:1.5px solid #fff; margin-left:-6px; display:inline-block; }
+
+  .field{ background:#F5F3EC; border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-size:13px; margin-bottom:10px; }
+  .field .lbl{ font-size:10.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:2px; }
+
+  .btn{ background:var(--ink); color:#fff; border:none; border-radius:10px; padding:14px; font-weight:700; font-size:13.5px; text-align:center; cursor:pointer; width:100%; }
+  .btn:hover{ background:#000; }
+  .btn.ghost{ background:none; border:1.5px solid var(--line); color:var(--ink); }
+
+  .row-btns{ display:flex; gap:8px; margin-top:8px; }
+  .row-btns .btn{ flex:1; padding:10px; font-size:12px; }
+
+  .illus{ background:var(--green-soft); border-radius:14px; height:130px; display:flex; align-items:center; justify-content:center; color:var(--green); font-size:12px; margin-bottom:16px; text-align:center; padding:10px; }
+
+  .item-row{ display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--line); font-size:13px; }
+  .item-row .who{ font-size:10.5px; color:var(--ink-soft); }
+  .item-row .price{ font-weight:700; }
+
+  .progress-track{ height:8px; background:var(--line); border-radius:6px; overflow:hidden; margin:12px 0 6px; }
+  .progress-fill{ height:100%; background:var(--green); }
+  .progress-note{ font-size:11px; color:var(--ink-soft); margin-bottom:16px; }
+
+  .split-row{ display:flex; justify-content:space-between; align-items:center; padding:12px; border:1px solid var(--line); border-radius:10px; margin-bottom:10px; }
+  .split-row .name{ font-weight:700; font-size:13px; }
+  .split-row .status{ font-size:10.5px; color:var(--ink-soft); }
+  .split-row .amt{ font-weight:700; font-family:'Bricolage Grotesque',sans-serif; }
+
+  .spacer{ flex:1; }
+  .center-col{ display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; text-align:center; }
+  .checkmark{ width:64px; height:64px; border-radius:50%; border:3px solid var(--ink); display:flex; align-items:center; justify-content:center; font-size:28px; margin-bottom:16px; }
+
+  .nav-hint{ text-align:center; color:var(--ink-soft); font-size:12.5px; margin-top:8px; }
+  .dots{ display:flex; gap:8px; justify-content:center; margin-top:4px; }
+  .dot{ width:8px; height:8px; border-radius:50%; background:var(--line); cursor:pointer; }
+  .dot.active{ background:var(--green); }
+
+  .amount-big{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:38px; margin:8px 0 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Interactive Prototype</div>
+    <h1>Group Ordering — Instamart</h1>
+    <p class="sub">Click through the flow below — every button is live.</p>
+  </header>
+
+  <div class="stage">
+    <div class="phone">
+      <div class="notch"></div>
+
+      <!-- Screen 1: Start cart -->
+      <div class="screen active" id="s1">
+        <div class="app-bar">Instamart <span style="font-weight:400;font-size:11px;color:var(--ink-soft);">9:41</span></div>
+        <div class="illus">🛒 Order together,<br>split easily</div>
+        <button class="btn" onclick="go('s2')">Start group cart</button>
+        <div class="field" style="margin-top:14px;">
+          <div class="lbl">Invite link</div>
+          insta.mt/cart/8f2k1
+        </div>
+        <div class="row-btns">
+          <div class="btn ghost">WhatsApp</div>
+          <div class="btn ghost">Copy</div>
+        </div>
+      </div>
+
+      <!-- Screen 2: Live cart -->
+      <div class="screen" id="s2">
+        <div class="app-bar">Group cart <span class="avatars"><span></span><span></span><span></span></span></div>
+        <div class="item-row"><div>Amul milk 1L<div class="who">added by Riya</div></div><div class="price">₹64</div></div>
+        <div class="item-row"><div>Bread, brown<div class="who">added by you</div></div><div class="price">₹45</div></div>
+        <div class="item-row"><div>Eggs, 12 pack<div class="who">added by Kabir</div></div><div class="price">₹98</div></div>
+        <div class="progress-track"><div class="progress-fill" style="width:69%;"></div></div>
+        <div class="progress-note">₹207 of ₹299 for free delivery</div>
+        <div class="spacer"></div>
+        <button class="btn" onclick="go('s3')">Proceed to split</button>
+        <button class="btn ghost" style="margin-top:8px;" onclick="go('s1')">← Back</button>
+      </div>
+
+      <!-- Screen 3: Split -->
+      <div class="screen" id="s3">
+        <div class="app-bar">Split the bill</div>
+        <div class="split-row"><div><div class="name">Riya</div><div class="status">paid</div></div><div class="amt">₹64</div></div>
+        <div class="split-row"><div><div class="name">You</div><div class="status">pending</div></div><div class="amt">₹45</div></div>
+        <div class="split-row"><div><div class="name">Kabir</div><div class="status">pending</div></div><div class="amt">₹98</div></div>
+        <div class="spacer"></div>
+        <button class="btn" onclick="go('s4')">Pay my share — ₹45</button>
+        <button class="btn ghost" style="margin-top:8px;" onclick="go('s2')">← Back</button>
+      </div>
+
+      <!-- Screen 4: Payment -->
+      <div class="screen" id="s4">
+        <div class="app-bar">Your payment</div>
+        <div class="center-col" style="flex:0; margin:20px 0;">
+          <div class="amount-big">₹45</div>
+          <div class="sub" style="font-size:12px;">your share of the group cart</div>
+        </div>
+        <div class="field"><div class="lbl">Payment method</div>UPI — saved</div>
+        <div class="spacer"></div>
+        <button class="btn" onclick="go('s5')">Pay ₹45</button>
+        <button class="btn ghost" style="margin-top:8px;" onclick="go('s3')">← Back</button>
+      </div>
+
+      <!-- Screen 5: Confirmation -->
+      <div class="screen" id="s5">
+        <div class="app-bar">Order placed</div>
+        <div class="center-col">
+          <div class="checkmark">✓</div>
+          <div style="font-weight:700; font-size:15px; margin-bottom:6px;">Arriving in 9 min</div>
+          <div class="sub" style="font-size:12px;">All 3 shares collected · ₹207 total</div>
+        </div>
+        <button class="btn" onclick="go('s1')">Start over</button>
+      </div>
+
+    </div>
+
+    <div class="dots">
+      <div class="dot active" data-s="s1" onclick="go('s1')"></div>
+      <div class="dot" data-s="s2" onclick="go('s2')"></div>
+      <div class="dot" data-s="s3" onclick="go('s3')"></div>
+      <div class="dot" data-s="s4" onclick="go('s4')"></div>
+      <div class="dot" data-s="s5" onclick="go('s5')"></div>
+    </div>
+    <div class="nav-hint">Tap buttons inside the screen, or the dots below, to navigate.</div>
+  </div>
+</div>
+
+<script>
+  function go(id){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.dot').forEach(d => d.classList.toggle('active', d.dataset.s === id));
+  }
+</script>
+</body>
+</html>
