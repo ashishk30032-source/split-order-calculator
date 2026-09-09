@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design — Group Ordering (Instamart)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBF7EE; --paper:#FFFFFF; --ink:#1E2A1F; --ink-soft:#5B6B5C;
+    --line:#DED6C3; --green:#2F6B3A; --green-soft:#E4EEE0; --amber:#F0A63A; --coral:#D96C4A;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--bg); font-family:'Inter',sans-serif; color:var(--ink); }
+  h1,h2,h3{ font-family:'Bricolage Grotesque',sans-serif; }
+  .wrap{ max-width:1100px; margin:0 auto; padding:56px 24px 90px; }
+  header{ margin-bottom:48px; }
+  .eyebrow{ font-size:12.5px; color:var(--green); font-weight:700; letter-spacing:0.04em; text-transform:uppercase; margin-bottom:10px; }
+  h1{ font-size:clamp(28px,4.5vw,40px); margin:0 0 12px; max-width:16ch; }
+  .sub{ color:var(--ink-soft); font-size:15px; max-width:60ch; }
+
+  section{ margin-bottom:56px; }
+  h2{ font-size:20px; margin-bottom:18px; }
+
+  .swatches{ display:grid; grid-template-columns:repeat(6,1fr); gap:14px; }
+  .swatch{ border-radius:12px; padding:16px 12px; color:#fff; font-size:11.5px; }
+  .swatch .name{ font-weight:700; margin-bottom:26px; }
+  .swatch .hex{ font-family:monospace; opacity:0.85; }
+  .swatch.light{ color:var(--ink); border:1px solid var(--line); }
+
+  .type-sample{ background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:24px; margin-bottom:14px; }
+  .type-sample .label{ font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px; }
+
+  .screens-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:24px; }
+  .phone-card{ background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:16px; text-align:center; }
+  .phone-mini{ width:100%; aspect-ratio:9/17.5; border-radius:20px; overflow:hidden; border:6px solid #1a1a1a; margin-bottom:12px; position:relative; }
+  .phone-mini svg{ width:100%; height:100%; display:block; }
+  .phone-card .cap{ font-weight:700; font-size:13px; }
+  .phone-card .cap-sub{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
+
+  .components-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:20px; }
+  .comp-card{ background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:20px; }
+  .comp-card .cname{ font-size:11px; color:var(--ink-soft); text-transform:uppercase; margin-bottom:12px; }
+  .btn-demo{ background:var(--ink); color:#fff; border-radius:10px; padding:12px; text-align:center; font-weight:700; font-size:13px; margin-bottom:10px; }
+  .btn-demo.ghost{ background:none; border:1.5px solid var(--line); color:var(--ink); }
+  .chip-demo{ display:inline-flex; align-items:center; gap:6px; background:var(--green-soft); color:var(--green); padding:6px 12px; border-radius:20px; font-size:12px; font-weight:700; }
+  .field-demo{ background:#F5F3EC; border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-size:13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Visual Design</div>
+    <h1>Group Ordering — Design System & Screens</h1>
+    <p class="sub">High-fidelity design language for the Instamart Group Ordering feature — color palette, typography, components, and final screens.</p>
+  </header>
+
+  <section>
+    <h2>Color palette</h2>
+    <div class="swatches">
+      <div class="swatch" style="background:#1E2A1F;"><div class="name">Ink</div><div class="hex">#1E2A1F</div></div>
+      <div class="swatch" style="background:#2F6B3A;"><div class="name">Green</div><div class="hex">#2F6B3A</div></div>
+      <div class="swatch light" style="background:#E4EEE0;"><div class="name">Green Soft</div><div class="hex">#E4EEE0</div></div>
+      <div class="swatch" style="background:#D96C4A;"><div class="name">Coral</div><div class="hex">#D96C4A</div></div>
+      <div class="swatch" style="background:#F0A63A;"><div class="name">Amber</div><div class="hex">#F0A63A</div></div>
+      <div class="swatch light" style="background:#FBF7EE;"><div class="name">Background</div><div class="hex">#FBF7EE</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Typography</h2>
+    <div class="type-sample">
+      <div class="label">Display / Bricolage Grotesque — 32px Bold</div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:32px;">Order together, split easily</div>
+    </div>
+    <div class="type-sample">
+      <div class="label">Body / Inter — 15px Regular</div>
+      <div style="font-size:15px;">Add people, add items, and see who owes what — updated live as the cart changes.</div>
+    </div>
+    <div class="type-sample">
+      <div class="label">Label / Inter — 11px Uppercase</div>
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-soft);">Added by Riya</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Core components</h2>
+    <div class="components-grid">
+      <div class="comp-card">
+        <div class="cname">Primary button</div>
+        <div class="btn-demo">Start group cart</div>
+        <div class="btn-demo ghost">Copy link</div>
+      </div>
+      <div class="comp-card">
+        <div class="cname">Chip / tag</div>
+        <div class="chip-demo">✓ Free delivery unlocked</div>
+      </div>
+      <div class="comp-card">
+        <div class="cname">Input field</div>
+        <div class="field-demo">insta.mt/cart/8f2k1</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Final screens</h2>
+    <div class="screens-grid">
+
+      <div class="phone-card">
+        <div class="phone-mini">
+          <svg viewBox="0 0 200 380" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="380" fill="#fff"/>
+            <rect width="200" height="380" fill="#E4EEE0" opacity="0.4"/>
+            <rect x="16" y="24" width="168" height="70" rx="10" fill="#E4EEE0"/>
+            <text x="30" y="55" font-family="Inter" font-size="10" fill="#2F6B3A">Order together,</text>
+            <text x="30" y="68" font-family="Inter" font-size="10" fill="#2F6B3A">split easily</text>
+            <rect x="16" y="106" width="168" height="34" rx="8" fill="#1E2A1F"/>
+            <text x="38" y="127" font-family="Inter" font-weight="700" font-size="10" fill="#fff">Start group cart</text>
+            <rect x="16" y="152" width="168" height="30" rx="8" fill="#F5F3EC" stroke="#DED6C3"/>
+            <text x="26" y="171" font-family="monospace" font-size="8.5" fill="#1E2A1F">insta.mt/cart/8f2k1</text>
+          </svg>
+        </div>
+        <div class="cap">Start a group cart</div>
+        <div class="cap-sub">Entry + invite link</div>
+      </div>
+
+      <div class="phone-card">
+        <div class="phone-mini">
+          <svg viewBox="0 0 200 380" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="380" fill="#fff"/>
+            <text x="16" y="30" font-family="Bricolage Grotesque" font-weight="700" font-size="13" fill="#1E2A1F">Group cart</text>
+            <rect x="16" y="46" width="168" height="30" rx="6" fill="#F5F3EC"/>
+            <text x="24" y="65" font-family="Inter" font-size="9" fill="#1E2A1F">Amul milk 1L</text>
+            <text x="150" y="65" font-family="Inter" font-weight="700" font-size="9" fill="#1E2A1F">₹64</text>
+            <rect x="16" y="80" width="168" height="30" rx="6" fill="#F5F3EC"/>
+            <text x="24" y="99" font-family="Inter" font-size="9" fill="#1E2A1F">Bread, brown</text>
+            <text x="150" y="99" font-family="Inter" font-weight="700" font-size="9" fill="#1E2A1F">₹45</text>
+            <rect x="16" y="130" width="168" height="8" rx="4" fill="#DED6C3"/>
+            <rect x="16" y="130" width="115" height="8" rx="4" fill="#2F6B3A"/>
+            <text x="16" y="152" font-family="Inter" font-size="8" fill="#5B6B5C">₹207 of ₹299 for free delivery</text>
+            <rect x="16" y="330" width="168" height="34" rx="8" fill="#1E2A1F"/>
+            <text x="42" y="351" font-family="Inter" font-weight="700" font-size="10" fill="#fff">Proceed to split</text>
+          </svg>
+        </div>
+        <div class="cap">Live shared cart</div>
+        <div class="cap-sub">Real-time item tracking</div>
+      </div>
+
+      <div class="phone-card">
+        <div class="phone-mini">
+          <svg viewBox="0 0 200 380" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="380" fill="#fff"/>
+            <text x="16" y="30" font-family="Bricolage Grotesque" font-weight="700" font-size="13" fill="#1E2A1F">Split the bill</text>
+            <rect x="16" y="46" width="168" height="40" rx="8" fill="#fff" stroke="#DED6C3"/>
+            <text x="26" y="65" font-family="Inter" font-weight="700" font-size="10" fill="#1E2A1F">Riya</text>
+            <text x="26" y="78" font-family="Inter" font-size="8" fill="#5B6B5C">paid</text>
+            <text x="150" y="70" font-family="Bricolage Grotesque" font-weight="700" font-size="11" fill="#1E2A1F">₹64</text>
+            <rect x="16" y="92" width="168" height="40" rx="8" fill="#fff" stroke="#2F6B3A" stroke-width="1.5"/>
+            <text x="26" y="111" font-family="Inter" font-weight="700" font-size="10" fill="#1E2A1F">You</text>
+            <text x="26" y="124" font-family="Inter" font-size="8" fill="#5B6B5C">pending</text>
+            <text x="150" y="116" font-family="Bricolage Grotesque" font-weight="700" font-size="11" fill="#1E2A1F">₹45</text>
+            <rect x="16" y="330" width="168" height="34" rx="8" fill="#1E2A1F"/>
+            <text x="34" y="351" font-family="Inter" font-weight="700" font-size="10" fill="#fff">Pay my share — ₹45</text>
+          </svg>
+        </div>
+        <div class="cap">Split review</div>
+        <div class="cap-sub">Per-person breakdown</div>
+      </div>
+
+      <div class="phone-card">
+        <div class="phone-mini">
+          <svg viewBox="0 0 200 380" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="380" fill="#fff"/>
+            <text x="16" y="30" font-family="Bricolage Grotesque" font-weight="700" font-size="13" fill="#1E2A1F">Order placed</text>
+            <circle cx="100" cy="120" r="34" fill="none" stroke="#1E2A1F" stroke-width="3"/>
+            <text x="88" y="130" font-family="Inter" font-size="26" fill="#1E2A1F">✓</text>
+            <text x="55" y="185" font-family="Inter" font-weight="700" font-size="12" fill="#1E2A1F">Arriving in 9 min</text>
+            <text x="42" y="205" font-family="Inter" font-size="9" fill="#5B6B5C">All 3 shares collected · ₹207</text>
+            <rect x="16" y="330" width="168" height="34" rx="8" fill="#1E2A1F"/>
+            <text x="52" y="351" font-family="Inter" font-weight="700" font-size="10" fill="#fff">Track live order</text>
+          </svg>
+        </div>
+        <div class="cap">Confirmation</div>
+        <div class="cap-sub">Single order, single ETA</div>
+      </div>
+
+    </div>
+  </section>
+</div>
+</body>
+</html>
